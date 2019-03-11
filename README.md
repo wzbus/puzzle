@@ -1,8 +1,8 @@
 # Sliding-Block
 ### Vue2.0数字华容道
-![Image text](https://github.com/1597084396/Sliding-Block/blob/master/img/demo.jpg)
+![Image text](https://github.com/1597084396/Sliding-Block/blob/master/img/demo_pc.jpg)
 #### 玩法说明
-将项目clone至本地，直接运行index.html，点击开始新游戏，通过点空位旁边的数字把该数字移动至空位，最终将矩阵内数字还原为1~15的顺序。
+将项目clone至本地，直接运行index.html，点击开始新游戏，通过点空位旁边的数字把该数字移动至空位，最终将矩阵内数字还原为1~15的顺序。项目支持响应式，PC端提供显示个人历史用时最佳成绩，喜欢的朋友请点个赞。
 #### 程序解析
 * 可解性
 ```
