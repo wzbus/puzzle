@@ -65,7 +65,7 @@
     </div>
     <div class="btn-wrap">
       <button class="btn" @click="sort">开始新游戏</button>
-      <button class="btn" @click="replay">重玩本局</button>
+      <button class="btn" :class="{'grey': c === 0 || succ}" @click="replay">重玩本局</button>
     </div>
   </div>
 </body>
@@ -76,6 +76,7 @@
     el: '#app',
     data() {
       return {
+        loading: true,
         list: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, ''],
         tempArr: [],
         t: 0,
@@ -120,7 +121,7 @@
         }
       },
       replay() {
-        if (this.start || this.succ) {
+        if (this.start && !this.succ) {
           this.list = []
           this.list = this.list.concat(this.tempArr)
           this.list.push('')
@@ -128,6 +129,8 @@
           clearInterval(this.t)
           this.ms = this.s = this.min = this.c = 0
           this.t = setInterval(this.timer, 10)
+        } else {
+          alert("请先开始游戏！")
         }
       },
       timer() {
@@ -171,6 +174,8 @@
           if (this.list[15] === '') {
             this.check()
           }
+        } else if (index === 11 || index === 14) {
+          alert("请先开始游戏！")
         }
       },
       check() {
@@ -227,6 +232,9 @@
         this.score = JSON.parse(localStorage.getItem('score')).filter(n => n)
       }
       this.calRecord()
+      setTimeout(() => {
+        this.loading = false  
+      }, 200);
     }
   })
 </script>
@@ -243,6 +251,10 @@
     height: 100%;
     background-image: url('img/bg.jpg');
     background-size: cover;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
   }
 
   @media screen and (max-width:768px) {
@@ -444,7 +456,12 @@
     border: 0;
     background-image: url('img/btn.jpg');
     background-size: cover;
-    outline: 0
+    outline: 0;
+    cursor: pointer;
+  }
+
+  .grey {
+    filter: grayscale(65%);
   }
 </style>
 
