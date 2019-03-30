@@ -1,4 +1,4 @@
-# Sliding-Block
+# puzzle
 ### Vue2.0数字华容道
 ![Image text](https://github.com/1597084396/Sliding-Block/blob/master/img/demo_pc.jpg)
 #### 玩法说明
