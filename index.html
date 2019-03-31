@@ -2,8 +2,8 @@
 <html>
 
 <head>
-  <meta http-equiv="X-UA-Compatible" content="IE=Edge, chrome=1; charset=utf-8" />
   <title>数字华容道</title>
+  <meta http-equiv="Content-Type" content="IE=Edge, chrome=1; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 </head>
 
@@ -16,7 +16,7 @@
       </div>
       <div class="right">
         <div class="time-wrap">
-          <span class="info info1">计时<span class="colon">:</span></span>
+          <span class="info info-p">计时<span class="colon">:</span></span>
           <div class="timer">
             <div class="count">{{min}}</div><span class="colon">:</span>
             <div class="count">{{s}}</div><span class="colon">:</span>
@@ -27,7 +27,10 @@
           <span class="info">步数<span class="colon">:</span></span>
           <div class="count">{{c}}</div>
         </div>
-        <p class="succ" v-show="this.succ">挑战成功!</p>
+        <div class="star-wrap">
+          <span class="info info-p">复杂度<span class="colon">:</span></span>
+          <span v-for="(item,index) of star" :key="index" v-html="item">{{item}}</span>
+        </div>
       </div>
       <div class="rank-wrap">
         <p class="rank">最高记录</p>
@@ -62,6 +65,10 @@
           <span class="num">{{item}}</span>
         </li>
       </ul>
+      <div class="succ" v-show="succ">
+        <p>挑战</p>
+        <p>成功</p>
+      </div>
     </div>
     <div class="btn-wrap">
       <button class="btn" @click="sort">开始新游戏</button>
@@ -76,7 +83,6 @@
     el: '#app',
     data() {
       return {
-        loading: true,
         list: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, ''],
         tempArr: [],
         t: 0,
@@ -84,6 +90,7 @@
         s: 0,
         ms: 0,
         c: 0,
+        complex: 0,
         start: false,
         succ: false,
         score: [],
@@ -106,9 +113,6 @@
             }
           }
         }
-        this.init(k)
-      },
-      init(k) {
         if (k % 2 === 0) {
           this.list = []
           this.list = this.list.concat(this.tempArr)
@@ -116,6 +120,23 @@
           this.succ = false
           this.start = true
           this.t = setInterval(this.timer, 10)
+          switch (true) {
+            case k <= 36:
+              this.complex = 1
+              break
+            case k >= 38 && k <= 46:
+              this.complex = 2
+              break
+            case k >= 48 && k <= 58:
+              this.complex = 3
+              break
+            case k >= 60 && k <= 68:
+              this.complex = 4
+              break
+            case k >= 70:
+              this.complex = 5
+              break
+          }
         } else {
           this.sort()
         }
@@ -232,9 +253,18 @@
         this.score = JSON.parse(localStorage.getItem('score')).filter(n => n)
       }
       this.calRecord()
-      setTimeout(() => {
-        this.loading = false  
-      }, 200);
+    },
+    computed: {
+      star() {
+        let list = []
+        for (let i = 0; i < this.complex; i++) {
+          list.push('<img src="img/star_full.png"/>')
+        }
+        while (list.length < 5) {
+          list.push('<img src="img/star_empty.png"/>')
+        }
+        return list
+      }
     }
   })
 </script>
@@ -264,7 +294,7 @@
     }
 
     .header {
-      padding: 30px 20px;
+      padding: 20px;
       font-size: 16px;
       display: flex;
     }
@@ -272,6 +302,9 @@
     .left {
       width: 35%;
       text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
 
     .right {
@@ -284,6 +317,12 @@
       width: 75%;
     }
 
+    .time-wrap,
+    .count-wrap,
+    .star-wrap {
+      margin-top: 10px;
+    }
+
     .timer {
       display: inline-block;
     }
@@ -293,10 +332,8 @@
     }
 
     .succ {
-      position: absolute;
-      top: 35px;
-      left: 120px;
-      text-align: center;
+      width: calc((100% - 30px) * 0.25);
+      height: calc((100% - 30px) * 0.25);
     }
 
     .rank-wrap {
@@ -325,12 +362,15 @@
       width: 115px;
     }
 
-    .info {
-      margin: 10px 0 5px;
+    .info-p {
+      margin-bottom: 5px;
+      display: block;
     }
 
-    .info1 {
-      display: block;
+    .time-wrap,
+    .count-wrap,
+    .star-wrap {
+      margin-top: 15px;
     }
 
     .list-wrap {
@@ -338,7 +378,8 @@
     }
 
     .succ {
-      margin-top: 15px;
+      width: 115px;
+      height: 115px;
     }
 
     .rank-wrap {
@@ -376,10 +417,6 @@
     margin-left: 5px;
   }
 
-  .count-wrap {
-    margin-top: 10px;
-  }
-
   .count {
     width: 30px;
     background-color: #fff;
@@ -388,12 +425,8 @@
     text-align: center;
   }
 
-  .succ {
-    color: #f00;
-    font-size: 20px;
-  }
-
   .list-wrap {
+    position: relative;
     width: 100%;
     text-align: center;
     background-image: url('img/btn.jpg');
@@ -458,6 +491,20 @@
     background-size: cover;
     outline: 0;
     cursor: pointer;
+  }
+
+  .succ {
+    position: absolute;
+    top: calc((100% - 30px) * 0.75 + 15px);
+    left: calc((100% - 30px) * 0.75 + 15px);
+    font-size: 36px;
+    font-weight: 700;
+    font-family: '方正舒体';
+    color: #824A3A;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
   .grey {
