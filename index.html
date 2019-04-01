@@ -5,6 +5,7 @@
   <title>数字华容道</title>
   <meta http-equiv="Content-Type" content="IE=Edge, chrome=1; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <link rel="shortcut icon" href="img/logo.ico" type="image/x-icon">
 </head>
 
 <body>
@@ -25,7 +26,8 @@
         </div>
         <div class="count-wrap">
           <span class="info">步数<span class="colon">:</span></span>
-          <div class="count">{{c}}</div>
+          <div class="count">{{count}}</div>
+          <button class="score-btn" @click="toast">查看记录</button>
         </div>
         <div class="star-wrap">
           <span class="info info-p">复杂度<span class="colon">:</span></span>
@@ -72,7 +74,7 @@
     </div>
     <div class="btn-wrap">
       <button class="btn" @click="sort">开始新游戏</button>
-      <button class="btn" :class="{'grey': c === 0 || succ}" @click="replay">重玩本局</button>
+      <button class="btn" :class="{'grey': count === 0 || succ}" @click="replay">重玩本局</button>
     </div>
   </div>
 </body>
@@ -83,13 +85,15 @@
     el: '#app',
     data() {
       return {
-        list: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, ''],
+        mode: 4,
+        num: 0,
+        list: [],
         tempArr: [],
         t: 0,
         min: 0,
         s: 0,
         ms: 0,
-        c: 0,
+        count: 0,
         complex: 0,
         start: false,
         succ: false,
@@ -100,14 +104,14 @@
     methods: {
       sort() {
         clearInterval(this.t)
-        this.ms = this.s = this.min = this.c = 0
+        this.ms = this.s = this.min = this.count = 0
         const m = this.list.filter(n => n)
         this.tempArr = m.sort(() => {
           return Math.random() - 0.5
         })
         let k = 0
-        for (let i = 0; i < 14; i++) {
-          for (let j = i + 1; j < 15; j++) {
+        for (let i = 0; i < this.num - 2; i++) {
+          for (let j = i + 1; j < this.num - 1; j++) {
             if (this.tempArr[i] > this.tempArr[j]) {
               k++;
             }
@@ -120,6 +124,7 @@
           this.succ = false
           this.start = true
           this.t = setInterval(this.timer, 10)
+          this.key()
           switch (true) {
             case k <= 36:
               this.complex = 1
@@ -148,7 +153,7 @@
           this.list.push('')
           this.succ = false
           clearInterval(this.t)
-          this.ms = this.s = this.min = this.c = 0
+          this.ms = this.s = this.min = this.count = 0
           this.t = setInterval(this.timer, 10)
         } else {
           alert("请先开始游戏！")
@@ -173,30 +178,55 @@
           const curNum = this.list[index],
             leftNum = this.list[index - 1],
             rightNum = this.list[index + 1],
-            topNum = this.list[index - 4],
-            bottomNum = this.list[index + 4]
+            topNum = this.list[index - this.mode],
+            bottomNum = this.list[index + this.mode]
           if (leftNum === '') {
             this.$set(this.list, index - 1, curNum)
             this.$set(this.list, index, '')
-            this.c++
+            this.count++
           } else if (rightNum === '') {
             this.$set(this.list, index + 1, curNum)
             this.$set(this.list, index, '')
-            this.c++
+            this.count++
           } else if (topNum === '') {
-            this.$set(this.list, index - 4, curNum)
+            this.$set(this.list, index - this.mode, curNum)
             this.$set(this.list, index, '')
-            this.c++
+            this.count++
           } else if (bottomNum === '') {
-            this.$set(this.list, index + 4, curNum)
+            this.$set(this.list, index + this.mode, curNum)
             this.$set(this.list, index, '')
-            this.c++
+            this.count++
           }
-          if (this.list[15] === '') {
-            this.check()
-          }
-        } else if (index === 11 || index === 14) {
+        } else if (index === this.num - this.mode - 1 || index === this.num - 2) {
           alert("请先开始游戏！")
+        }
+      },
+      key() {
+        const that = this
+        document.onkeydown = function (e) {
+          if (that.start) {
+            let empty = that.list.indexOf('')
+            if (e.keyCode === 37 && empty % that.mode !== that.mode - 1) {
+              that.$set(that.list, empty, that.list[empty + 1])
+              that.$set(that.list, empty + 1, '')
+              that.count++
+            }
+            else if (e.keyCode === 38 && empty < that.num - that.mode) {
+              that.$set(that.list, empty, that.list[empty + that.mode])
+              that.$set(that.list, empty + that.mode, '')
+              that.count++
+            }
+            else if (e.keyCode === 39 && empty % that.mode !== 0) {
+              that.$set(that.list, empty, that.list[empty - 1])
+              that.$set(that.list, empty - 1, '')
+              that.count++
+            }
+            else if (e.keyCode === 40 && empty > that.mode) {
+              that.$set(that.list, empty, that.list[empty - that.mode])
+              that.$set(that.list, empty - that.mode, '')
+              that.count++
+            }
+          }
         }
       },
       check() {
@@ -206,7 +236,7 @@
           clearInterval(this.t)
           this.succ = true
           this.start = false
-          let newScore = this.min + '′' + this.s + '″' + this.ms
+          let newScore = this.min + '′' + this.zero(this.s) + '″' + this.zero(this.ms)
           let newRecord = 3600000 - (this.min * 60000 + this.s * 1000 + this.ms * 10)
           if (newRecord > this.record[2]) {
             if (newRecord > this.record[1]) {
@@ -215,16 +245,31 @@
                 this.score[1] = this.score[0]
                 this.score[0] = newScore
                 localStorage.setItem('score', JSON.stringify(this.score))
+                if (this.record[0] !== 0) {
+                  setTimeout(() => {
+                    alert('恭喜你创造新记录，获得第一名！')
+                  }, 500)
+                }
                 this.calRecord()
               } else {
                 this.score[2] = this.score[1]
                 this.score[1] = newScore
                 localStorage.setItem('score', JSON.stringify(this.score))
+                if (this.record[1] !== 0) {
+                  setTimeout(() => {
+                    alert('恭喜你创造新记录，获得第二名！')
+                  }, 500)
+                }
                 this.calRecord()
               }
             } else {
               this.score[2] = newScore
               localStorage.setItem('score', JSON.stringify(this.score))
+              if (this.record[2] !== 0) {
+                setTimeout(() => {
+                  alert('恭喜你创造新记录，获得第三名！')
+                }, 500)
+              }
               this.calRecord()
             }
           } else {
@@ -246,13 +291,32 @@
         for (let i = 0; i < 3 - len; i++) {
           this.record.push(0)
         }
+      },
+      toast() {
+        alert('第一名：' + this.score[0] + '\n第二名：' + this.score[1] + '\n第三名：' + this.score[2])
+      },
+      zero(len) {
+        return (Array(2).join(0) + len).slice(-2);
       }
     },
     mounted() {
+      this.num = Math.pow(this.mode, 2)
+      for (let i = 1; i < this.num; i++) {
+        this.list.push(i)
+      }
+      this.list.push('')
       if (localStorage.getItem('score')) {
         this.score = JSON.parse(localStorage.getItem('score')).filter(n => n)
       }
       this.calRecord()
+      console.log(this.score)
+    },
+    watch: {
+      list() {
+        if (this.start && this.list.indexOf('') === this.num - 1) {
+          this.check()
+        }
+      }
     },
     computed: {
       star() {
@@ -339,6 +403,15 @@
     .rank-wrap {
       display: none;
     }
+
+    .score-btn {
+      margin-left: 20px;
+      padding: 0 10px;
+      font-size: 16px;
+      background: transparent;
+      border: none;
+      outline: none;
+    }
   }
 
   @media screen and (min-width:768px) {
@@ -403,6 +476,10 @@
 
     .score {
       vertical-align: 5px;
+    }
+
+    .score-btn {
+      display: none;
     }
   }
 
