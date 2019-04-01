@@ -67,6 +67,10 @@
           <span class="num">{{item}}</span>
         </li>
       </ul>
+      <div class="succ" v-show="!start && !succ">
+        <p>目标</p>
+        <p>图形</p>
+      </div>
       <div class="succ" v-show="succ">
         <p>挑战</p>
         <p>成功</p>
@@ -309,7 +313,6 @@
         this.score = JSON.parse(localStorage.getItem('score')).filter(n => n)
       }
       this.calRecord()
-      console.log(this.score)
     },
     watch: {
       list() {
