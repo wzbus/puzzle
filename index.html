@@ -354,6 +354,7 @@
       <button class="btn" @click="sort">开始新游戏</button>
       <button class="btn" :class="{'grey': count === 0 || succ}" @click="replay">重玩本局</button>
     </div>
+    <audio src="audio/sound.wav" id="audio"></audio>
   </div>
 </body>
 
@@ -453,6 +454,7 @@
       },
       move(index) {
         const empty = this.list.indexOf('')
+        const audio = document.getElementById('audio')
         if (this.start) {
           if (Math.floor(index / this.mode) === Math.floor(empty / this.mode)) {
             if (index < empty) {
@@ -461,12 +463,14 @@
                 this.$set(this.list, empty - i - 1, '')
               }
               this.count++
+              audio.play()
             } else if (index > empty) {
               for (let i = 0; i < index - empty; i++) {
                 this.$set(this.list, empty + i, this.list[empty + i + 1])
                 this.$set(this.list, empty + i + 1, '')
               }
               this.count++
+              audio.play()
             }
           } else if (index % this.mode === empty % this.mode) {
             if (index < empty) {
@@ -475,12 +479,14 @@
                 this.$set(this.list, empty - (i + 1) * this.mode, '')
               }
               this.count++
+              audio.play()
             } else if (index > empty) {
               for (let i = 0; i < (index - empty) / this.mode; i++) {
                 this.$set(this.list, empty + i * this.mode, this.list[empty + (i + 1) * this.mode])
                 this.$set(this.list, empty + (i + 1) * this.mode, '')
               }
               this.count++
+              audio.play()
             }
           }
         } else {
@@ -492,27 +498,32 @@
         document.onkeydown = function (e) {
           if (that.start) {
             const empty = that.list.indexOf('')
+            const audio = document.getElementById('audio')
             if (e.keyCode === 37 && empty % that.mode !== that.mode - 1) {
               that.$set(that.list, empty, that.list[empty + 1])
               that.$set(that.list, empty + 1, '')
               that.count++
+              audio.play()
             }
             else if (e.keyCode === 38 && empty < that.num - that.mode) {
               e.preventDefault()
               that.$set(that.list, empty, that.list[empty + that.mode])
               that.$set(that.list, empty + that.mode, '')
               that.count++
+              audio.play()
             }
             else if (e.keyCode === 39 && empty % that.mode !== 0) {
               that.$set(that.list, empty, that.list[empty - 1])
               that.$set(that.list, empty - 1, '')
               that.count++
+              audio.play()
             }
             else if (e.keyCode === 40 && empty > that.mode) {
               e.preventDefault()
               that.$set(that.list, empty, that.list[empty - that.mode])
               that.$set(that.list, empty - that.mode, '')
               that.count++
+              audio.play()
             }
           }
         }
