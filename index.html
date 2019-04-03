@@ -452,30 +452,38 @@
         }
       },
       move(index) {
+        const empty = this.list.indexOf('')
         if (this.start) {
-          const curNum = this.list[index],
-            leftNum = this.list[index - 1],
-            rightNum = this.list[index + 1],
-            topNum = this.list[index - this.mode],
-            bottomNum = this.list[index + this.mode]
-          if (leftNum === '') {
-            this.$set(this.list, index - 1, curNum)
-            this.$set(this.list, index, '')
-            this.count++
-          } else if (rightNum === '') {
-            this.$set(this.list, index + 1, curNum)
-            this.$set(this.list, index, '')
-            this.count++
-          } else if (topNum === '') {
-            this.$set(this.list, index - this.mode, curNum)
-            this.$set(this.list, index, '')
-            this.count++
-          } else if (bottomNum === '') {
-            this.$set(this.list, index + this.mode, curNum)
-            this.$set(this.list, index, '')
-            this.count++
+          if (Math.floor(index / this.mode) === Math.floor(empty / this.mode)) {
+            if (index < empty) {
+              for (let i = 0; i < empty - index; i++) {
+                this.$set(this.list, empty - i, this.list[empty - i - 1])
+                this.$set(this.list, empty - i - 1, '')
+              }
+              this.count++
+            } else if (index > empty) {
+              for (let i = 0; i < index - empty; i++) {
+                this.$set(this.list, empty + i, this.list[empty + i + 1])
+                this.$set(this.list, empty + i + 1, '')
+              }
+              this.count++
+            }
+          } else if (index % this.mode === empty % this.mode) {
+            if (index < empty) {
+              for (let i = 0; i < (empty - index) / this.mode; i++) {
+                this.$set(this.list, empty - i * this.mode, this.list[empty - (i + 1) * this.mode])
+                this.$set(this.list, empty - (i + 1) * this.mode, '')
+              }
+              this.count++
+            } else if (index > empty) {
+              for (let i = 0; i < (index - empty) / this.mode; i++) {
+                this.$set(this.list, empty + i * this.mode, this.list[empty + (i + 1) * this.mode])
+                this.$set(this.list, empty + (i + 1) * this.mode, '')
+              }
+              this.count++
+            }
           }
-        } else if (index === this.num - this.mode - 1 || index === this.num - 2) {
+        } else {
           alert("请先开始游戏！")
         }
       },
@@ -483,7 +491,7 @@
         const that = this
         document.onkeydown = function (e) {
           if (that.start) {
-            let empty = that.list.indexOf('')
+            const empty = that.list.indexOf('')
             if (e.keyCode === 37 && empty % that.mode !== that.mode - 1) {
               that.$set(that.list, empty, that.list[empty + 1])
               that.$set(that.list, empty + 1, '')
