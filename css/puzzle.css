@@ -10,8 +10,7 @@ html {
   height: 100%;
   background-image: url('../img/bg.jpg');
   background-attachment: fixed;
-  -o-background-size: cover;
-     background-size: cover;
+  background-size: cover;
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -19,9 +18,7 @@ html {
 }
 
 body {
-  height: -webkit-calc(100% - 20px);
-  height: -moz-calc(100% - 20px);
-  height: calc(100% - 20px);
+  height: 100%;
 }
 
 ::-webkit-scrollbar {
@@ -144,7 +141,9 @@ body {
     width: calc(50% - 250px);
     height: 400px;
     right: 0;
-    margin-top: 100px;
+    top: -webkit-calc(50% - 200px);
+    top: -moz-calc(50% - 200px);
+    top: calc(50% - 200px);
     font-size: 16px;
     text-align: center;
   }
@@ -165,7 +164,16 @@ body {
   }
 
   .list-wrap {
-    margin: 20px 0;
+    top: -webkit-calc(50% - 284px);
+    top: -moz-calc(50% - 284px);
+    top: calc(50% - 284px);
+  }
+
+  .btn-wrap {
+    position: relative;
+    top: -webkit-calc(50% - 264px);
+    top: -moz-calc(50% - 264px);
+    top: calc(50% - 264px);
   }
 
   .succ {
@@ -232,8 +240,7 @@ body {
   width: 100%;
   text-align: center;
   background-image: url('../img/btn.jpg');
-  -o-background-size: cover;
-     background-size: cover;
+  background-size: cover;
   border-radius: 10px;
 }
 
@@ -313,8 +320,7 @@ body {
   border-radius: 20px;
   border: 0;
   background-image: url('../img/btn.jpg');
-  -o-background-size: cover;
-     background-size: cover;
+  background-size: cover;
   outline: 0;
   cursor: pointer;
 }
