@@ -41,8 +41,7 @@
           <li class="rank-li" v-for="n of 3">
             <img :src="'img/no'+n+'.png'" width="20" height="20" />
             <span class="score">
-              <span v-if="score[n - 1]">{{score[n - 1]}}</span>
-              <span v-if="!score[n - 1]">未记录</span>
+              <span>{{score[n - 1] || "未记录"}}</span>
             </span>
           </li>
         </ul>
