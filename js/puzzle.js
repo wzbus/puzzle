@@ -1,6 +1,6 @@
 new Vue({
   el: '#app',
-  data() {
+  data () {
     return {
       mode: 4,
       num: 0,
@@ -19,7 +19,7 @@ new Vue({
     }
   },
   methods: {
-    sort() {
+    sort () {
       clearInterval(this.t)
       this.ms = this.s = this.min = this.count = 0
       const m = this.list.filter(n => n)
@@ -63,7 +63,7 @@ new Vue({
         this.sort()
       }
     },
-    replay() {
+    replay () {
       if (this.start && !this.succ) {
         this.list = []
         this.list = this.list.concat(this.tempArr)
@@ -76,7 +76,7 @@ new Vue({
         alert("请先开始游戏！")
       }
     },
-    timer() {
+    timer () {
       this.ms += 1
       if (this.ms >= 100) {
         this.ms = 0
@@ -90,7 +90,7 @@ new Vue({
         clearInterval(this.t)
       }
     },
-    move(index) {
+    move (index) {
       const empty = this.list.indexOf('')
       const audio = document.getElementById('audio')
       if (this.start) {
@@ -131,7 +131,7 @@ new Vue({
         alert("请先开始游戏！")
       }
     },
-    key() {
+    key () {
       const that = this
       document.onkeydown = function (e) {
         if (that.start) {
@@ -166,7 +166,7 @@ new Vue({
         }
       }
     },
-    check() {
+    check () {
       const m = this.list.filter(n => n)
       const succ = m.every((e, i) => e === i + 1)
       if (succ) {
@@ -181,40 +181,31 @@ new Vue({
               this.score[2] = this.score[1]
               this.score[1] = this.score[0]
               this.score[0] = newScore
-              localStorage.setItem('score', JSON.stringify(this.score))
-              if (this.record[0] !== 0) {
-                setTimeout(() => {
-                  alert('恭喜你创造新记录，获得第一名！')
-                }, 500)
-              }
-              this.calRecord()
+              this.save(1)
             } else {
               this.score[2] = this.score[1]
               this.score[1] = newScore
-              localStorage.setItem('score', JSON.stringify(this.score))
-              if (this.record[1] !== 0) {
-                setTimeout(() => {
-                  alert('恭喜你创造新记录，获得第二名！')
-                }, 500)
-              }
-              this.calRecord()
+              this.save(2)
             }
           } else {
             this.score[2] = newScore
-            localStorage.setItem('score', JSON.stringify(this.score))
-            if (this.record[2] !== 0) {
-              setTimeout(() => {
-                alert('恭喜你创造新记录，获得第三名！')
-              }, 500)
-            }
-            this.calRecord()
+            this.save(3)
           }
         } else {
           return false
         }
       }
     },
-    calRecord() {
+    save (n) {
+      localStorage.setItem('score', JSON.stringify(this.score))
+      if (this.record[2] !== 0) {
+        setTimeout(() => {
+          alert(`恭喜你创造新记录，获得第${n}名！`)
+        }, 500)
+      }
+      this.calRecord()
+    },
+    calRecord () {
       let len = this.score.filter(n => n).length
       this.record = []
       for (let i = 0; i < len; i++) {
@@ -229,14 +220,14 @@ new Vue({
         this.record.push(0)
       }
     },
-    toast() {
-      alert('第一名：' + this.score[0] + '\n第二名：' + this.score[1] + '\n第三名：' + this.score[2])
+    toast () {
+      alert(`第一名:${this.score[0]}\n第二名:${this.score[1]}\n第三名:${this.score[2]}`)
     },
-    zero(len) {
+    zero (len) {
       return (Array(2).join(0) + len).slice(-2);
     }
   },
-  mounted() {
+  mounted () {
     this.num = Math.pow(this.mode, 2)
     for (let i = 1; i < this.num; i++) {
       this.list.push(i)
@@ -248,14 +239,14 @@ new Vue({
     this.calRecord()
   },
   watch: {
-    list() {
+    list () {
       if (this.start && this.list.indexOf('') === this.num - 1) {
         this.check()
       }
     }
   },
   computed: {
-    star() {
+    star () {
       let list = []
       for (let i = 0; i < this.complex; i++) {
         list.push('<img src="img/star_full.png"/>')

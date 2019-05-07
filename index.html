@@ -38,25 +38,11 @@
       <div class="rank-wrap">
         <p class="rank">最高记录</p>
         <ul class="rank-ul">
-          <li class="rank-li">
-            <img src="img/no1.png" width="20" height="20" />
+          <li class="rank-li" v-for="n of 3">
+            <img :src="'img/no'+n+'.png'" width="20" height="20" />
             <span class="score">
-              <span v-if="score[0]">{{score[0]}}</span>
-              <span v-if="!score[0]">未记录</span>
-            </span>
-          </li>
-          <li class="rank-li">
-            <img src="img/no2.png" width="20" height="20" />
-            <span class="score">
-              <span v-if="score[1]">{{score[1]}}</span>
-              <span v-if="!score[1]">未记录</span>
-            </span>
-          </li>
-          <li class="rank-li">
-            <img src="img/no3.png" width="20" height="20" />
-            <span class="score">
-              <span v-if="score[2]">{{score[2]}}</span>
-              <span v-if="!score[2]">未记录</span>
+              <span v-if="score[n - 1]">{{score[n - 1]}}</span>
+              <span v-if="!score[n - 1]">未记录</span>
             </span>
           </li>
         </ul>
