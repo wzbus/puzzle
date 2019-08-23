@@ -62,6 +62,16 @@
         <p>成功</p>
       </div>
     </div>
+    <div class="opp-wrap">
+      <p>对方视图</p>
+      <div class="list-wrap-opp">
+        <ul class="list-ul">
+          <li class="list-li" :class="item?'full':'empty'" v-for="(item,index) in oppList" :key="index">
+            <span class="num">{{item}}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
     <div class="btn-wrap">
       <button class="btn" @click="sort">开始新游戏</button>
       <button class="btn" :class="{'grey': count === 0 || succ}" @click="replay">重玩本局</button>
@@ -70,7 +80,8 @@
   </div>
 </body>
 
-<script src="js/vue.min.js"></script>
+<script src="https://cdn.bootcss.com/vue/2.6.10/vue.min.js"></script>
+<script src="https://cdn.bootcss.com/socket.io/2.2.0/socket.io.js"></script>
 <script src="js/puzzle.js"></script>
 
 </html>

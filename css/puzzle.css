@@ -159,7 +159,7 @@ body {
   .succ {
     width: 115px;
     height: 115px;
-    font-size: 36px;
+    font-size: 38px;
   }
 
   .rank-wrap {
@@ -241,7 +241,7 @@ body {
   padding-bottom: 25%;
   font-size: 48px;
   font-weight: 700;
-  font-family: '方正舒体';
+  font-family: 'FZST';
   color: #824A3A;
   border: 1px solid #824A3A;
   -moz-box-sizing: border-box;
@@ -297,8 +297,8 @@ body {
   position: absolute;
   top: calc((100% - 30px) * 0.75 + 15px);
   left: calc((100% - 30px) * 0.75 + 15px);
-  font-weight: 700;
-  font-family: '方正舒体';
+  font-weight: 500;
+  font-family: 'FZST';
   color: #824A3A;
   text-align: center;
   display: -webkit-flex;
@@ -319,6 +319,45 @@ body {
 .grey {
   -webkit-filter: grayscale(65%);
           filter: grayscale(65%);
+}
+
+.opp-wrap {
+  position: absolute;
+  width: calc(50% - 250px);
+  height: 400px;
+  left: 0;
+  top: 50px;
+  font-size: 16px;
+  text-align: center;
+}
+
+.list-wrap-opp {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: 10px auto;
+  width: 70%;
+  background-image: url('../img/btn.jpg');
+  background-size: cover;
+  border-radius: 10px;
+}
+
+.list-wrap-opp .list-ul {
+  width: calc(100% - 20px);
+  padding: 10px 0;
+}
+
+.list-wrap-opp .list-li {
+  font-size: 24px;
+}
+
+@font-face {
+  font-family: 'FZST';
+  src: url('../font/FZSTJW.TTF');
+  src: url('../font/FZSTJW.eot?#font-spider') format('embedded-opentype'),
+      url('../font/FZSTJW.woff') format('woff'),
+      url('../font/FZSTJW.ttf') format('truetype'),
+      url('../font/FZSTJW.svg') format('svg');
 }
 
 [v-cloak] {

@@ -1,3 +1,4 @@
+var socket = io('ws://localhost:8080');
 new Vue({
   el: '#app',
   data () {
@@ -5,6 +6,7 @@ new Vue({
       mode: 4,
       num: 0,
       list: [],
+      oppList: [],
       tempArr: [],
       t: 0,
       min: 0,
@@ -30,7 +32,7 @@ new Vue({
       for (let i = 0; i < this.num - 2; i++) {
         for (let j = i + 1; j < this.num - 1; j++) {
           if (this.tempArr[i] > this.tempArr[j]) {
-            k++;
+            k++
           }
         }
       }
@@ -38,6 +40,8 @@ new Vue({
         this.list = []
         this.list = this.list.concat(this.tempArr)
         this.list.push('')
+        socket.emit('init', this.list)
+        this.oppList = JSON.parse(JSON.stringify(this.list))
         this.succ = false
         this.start = true
         this.t = setInterval(this.timer, 10)
@@ -92,39 +96,34 @@ new Vue({
     },
     move (index) {
       const empty = this.list.indexOf('')
-      const audio = document.getElementById('audio')
       if (this.start) {
         if (Math.floor(index / this.mode) === Math.floor(empty / this.mode)) {
           if (index < empty) {
             for (let i = 0; i < empty - index; i++) {
               this.$set(this.list, empty - i, this.list[empty - i - 1])
               this.$set(this.list, empty - i - 1, '')
+              this.moveRes()
             }
-            this.count++
-            audio.play()
           } else if (index > empty) {
             for (let i = 0; i < index - empty; i++) {
               this.$set(this.list, empty + i, this.list[empty + i + 1])
               this.$set(this.list, empty + i + 1, '')
+              this.moveRes()
             }
-            this.count++
-            audio.play()
           }
         } else if (index % this.mode === empty % this.mode) {
           if (index < empty) {
             for (let i = 0; i < (empty - index) / this.mode; i++) {
               this.$set(this.list, empty - i * this.mode, this.list[empty - (i + 1) * this.mode])
               this.$set(this.list, empty - (i + 1) * this.mode, '')
+              this.moveRes()
             }
-            this.count++
-            audio.play()
           } else if (index > empty) {
             for (let i = 0; i < (index - empty) / this.mode; i++) {
               this.$set(this.list, empty + i * this.mode, this.list[empty + (i + 1) * this.mode])
               this.$set(this.list, empty + (i + 1) * this.mode, '')
+              this.moveRes()
             }
-            this.count++
-            audio.play()
           }
         }
       } else {
@@ -136,35 +135,36 @@ new Vue({
       document.onkeydown = function (e) {
         if (that.start) {
           const empty = that.list.indexOf('')
-          const audio = document.getElementById('audio')
           if (e.keyCode === 37 && empty % that.mode !== that.mode - 1) {
             that.$set(that.list, empty, that.list[empty + 1])
             that.$set(that.list, empty + 1, '')
-            that.count++
-            audio.play()
+            this.moveRes()
           }
           else if (e.keyCode === 38 && empty < that.num - that.mode) {
             e.preventDefault()
             that.$set(that.list, empty, that.list[empty + that.mode])
             that.$set(that.list, empty + that.mode, '')
-            that.count++
-            audio.play()
+            this.moveRes()
           }
           else if (e.keyCode === 39 && empty % that.mode !== 0) {
             that.$set(that.list, empty, that.list[empty - 1])
             that.$set(that.list, empty - 1, '')
-            that.count++
-            audio.play()
+            this.moveRes()
           }
           else if (e.keyCode === 40 && empty > that.mode) {
             e.preventDefault()
             that.$set(that.list, empty, that.list[empty - that.mode])
             that.$set(that.list, empty - that.mode, '')
-            that.count++
-            audio.play()
+            this.moveRes()
           }
         }
       }
+    },
+    moveRes () {
+      const audio = document.getElementById('audio')
+      this.count++
+      audio.play()
+      socket.emit('update', this.list)
     },
     check () {
       const m = this.list.filter(n => n)
@@ -175,6 +175,7 @@ new Vue({
         this.start = false
         let newScore = this.min + '′' + this.zero(this.s) + '″' + this.zero(this.ms)
         let newRecord = 3600000 - (this.min * 60000 + this.s * 1000 + this.ms * 10)
+        socket.emit('end', newScore)
         if (newRecord > this.record[2]) {
           if (newRecord > this.record[1]) {
             if (newRecord > this.record[0]) {
@@ -233,10 +234,35 @@ new Vue({
       this.list.push(i)
     }
     this.list.push('')
+    this.oppList = JSON.parse(JSON.stringify(this.list))
     if (localStorage.getItem('score')) {
       this.score = JSON.parse(localStorage.getItem('score')).filter(n => n)
     }
-    this.calRecord()
+    this.calRecord() 
+    let that = this
+    socket.on('enter', function(msg) {
+      console.log(msg)
+    })
+    socket.on('waiting', function(msg) {
+      console.log(msg)
+    })
+    socket.on('init', function(list) {
+      console.log('init')
+      that.list = list 
+      that.oppList = JSON.parse(JSON.stringify(that.list))
+      that.succ = false
+      that.start = true
+      that.t = setInterval(that.timer, 10)
+      that.key()
+    })
+    socket.on('update', function(list) {
+      that.oppList = list
+    })
+    socket.on('lost', function(score) {
+      clearInterval(that.t)
+      that.start = false
+      console.log('你输了，对方成绩' + score)
+    })
   },
   watch: {
     list () {
